@@ -1,11 +1,10 @@
 name: Docker Image CI
 
-on:
+on:  
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+    tags:
+      - '*'
+      
 env:
   PROJECT_ID: issue-tracker-388916 # TODO: update Google Cloud project id
   GAR_LOCATION: europe # TODO: update Artifact Registry location
@@ -25,16 +24,20 @@ jobs:
 
     steps:
 
+
     - name: Checkout
       uses: actions/checkout@v3      
     
+
     - uses: benjlevesque/short-sha@v2.2
       id: short-sha
       with:
-        length: 8    
+        length: 8
+
     - run: echo $SHA
       env:
         SHA: ${{ steps.short-sha.outputs.sha }}
+
 
     - name: Google Auth
       id: auth
@@ -43,6 +46,7 @@ jobs:
         token_format: 'access_token'
         workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
         service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+
 
     # Authenticate Docker to Google Cloud Artifact Registry
     - name: Docker Auth
@@ -56,34 +60,6 @@ jobs:
 
     - name: Build and Push Container
       run: |-
-        docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.SHA }}" ./
-        docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.SHA }}"
-
-    
-    # - id: docker-push-tagged
-    #   name: Tag Docker image and push to Google Artifact Registry
-    #   uses: docker/build-push-action@v2
-    #   with:
-    #     push: true
-    #     tags: |
-    #        europe-docker.pkg.dev/issue-tracker-388916/build/issuetracker:${{ env.SHA }}
-    #        europe-docker.pkg.dev/issue-tracker-388916/build/issuetracker:latest
-
-
-    - name: Deploy to Cloud Run
-      id: deploy
-      uses: google-github-actions/deploy-cloudrun@v1
-      with:
-        service: ${{ env.SERVICE }}
-        region: ${{ env.REGION }}
-        # NOTE: If using a pre-built image, update the image name here
-        image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.SHA }}
-        # NOTE: You can also set env variables here:
-        #  env_vars: |
-        #  NODE_ENV=production
-        #  TOKEN_EXPIRE=6400
-
-
-    # If required, use the Cloud Run url output in later steps
-    - name: Show Output
-      run: echo ${{ steps.deploy.outputs.url }}    
+        docker pull "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.SHA }}" 
+        docker tag "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.SHA }}" "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.ref_name }}"
+        docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.ref_name }}"
