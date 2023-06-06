@@ -22,9 +22,13 @@ public class IssueRepository {
         issue2.setId(2);
         Issue issue3 = new Issue("Issue #3", "This is the third issue", "Luigi Bonacina");
         issue3.setId(3);
+        Issue issue4 = new Issue("Issue #4", "This is the fourth issue", "Riccardo Venittelli");
+        issue4.setId(4);
+
         issues.put(1, issue1);
         issues.put(2, issue2);
         issues.put(3, issue3);
+        issues.put(4, issue4);
     }    
 
     public Iterable<Issue> findAll() {
