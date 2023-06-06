@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: benjlevesque/short-sha@v2.2
+      id: short-sha
+      with:
+        length: 8    
+    - run: echo $SHA
+      env:
+        SHA: ${{ steps.short-sha.outputs.sha }}        
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag europe-docker.pkg.dev/issue-tracker-388916/build/issuetracker:${{ env.SHA }}
