@@ -1,10 +1,12 @@
 name: Docker Image CI
 
+
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'extra/**'
 
 env:
   PROJECT_ID: issue-tracker-388916 # TODO: update Google Cloud project id
