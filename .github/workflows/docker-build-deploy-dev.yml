@@ -9,7 +9,7 @@ on:
       - 'extra/**'
 
 env:
-  PROJECT_ID: issue-tracker-388916 # TODO: update Google Cloud project id
+  PROJECT_ID: maia-issue-tracker-dev # TODO: update Google Cloud project id
   GAR_LOCATION: europe # TODO: update Artifact Registry location
   REPOSITORY: build # TODO: update Artifact Registry repository name
   SERVICE: issue-tracker # TODO: update Cloud Run service name
