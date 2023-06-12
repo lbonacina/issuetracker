@@ -10,7 +10,7 @@ on:
 
 env:
   PROJECT_ID: maia-issue-tracker-dev # TODO: update Google Cloud project id
-  GAR_LOCATION: europe # TODO: update Artifact Registry location
+  GAR_LOCATION: europe-west8 # TODO: update Artifact Registry location, could be multi-regional
   REPOSITORY: build # TODO: update Artifact Registry repository name
   SERVICE: issue-tracker # TODO: update Cloud Run service name
   REGION: europe-west8 # TODO: update Cloud Run service region
