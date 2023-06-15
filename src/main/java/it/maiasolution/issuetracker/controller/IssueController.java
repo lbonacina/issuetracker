@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.maiasolution.issuetracker.model.entity.Issue;
 import it.maiasolution.issuetracker.model.repository.IssueRepository;
 import lombok.AllArgsConstructor;
@@ -78,7 +83,13 @@ public class IssueController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable("id") Integer id) {
+	@Operation(tags = "Issues", 	
+			   summary = "Delete Issue", 
+			   description = "Delete Issue",
+			   responses = {
+					@ApiResponse(responseCode = "204")
+			   })
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         try {
             issueRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
